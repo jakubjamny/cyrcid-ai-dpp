@@ -1,0 +1,12 @@
+{
+  "name": "cyrcid-dpp",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*",
+    "exporters/*"
+  ],
+  "scripts": {
+    "ci": "node scripts/validate.js"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "$id": "https://cyrcid.com/schemas/dpp/v1.json",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "product": {
+      "type": "object"
+    }
+  },
+  "additionalProperties": true
+}
