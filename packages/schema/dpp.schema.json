@@ -1,9 +1,10 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://example.com/schema/dpp.v1.json",
+  "$id": "https://cyrcid.com/schemas/dpp/v1.json",
   "title": "Digital Product Passport (Textile) v1",
   "type": "object",
   "additionalProperties": false,
+
   "properties": {
     "product": {
       "type": "object",
@@ -80,84 +81,48 @@
         "additionalProperties": false,
         "properties": {
           "origin": {
-  "type": "object",
-  "additionalProperties": false,
-  "description": "Optional origin information for raw material. Use 'countries' if shares are unknown, or 'breakdown' with % shares.",
-  "oneOf": [
-    {
-      "properties": {
-        "countries": {
-          "type": "array",
-          "minItems": 1,
-          "uniqueItems": true,
-          "items": { "$ref": "#/$defs/isoCountryCode" }
-        }
-      },
-      "required": ["countries"]
-    },
-    {
-      "properties": {
-        "breakdown": {
-          "type": "array",
-          "minItems": 1,
-          "items": {
             "type": "object",
             "additionalProperties": false,
-            "properties": {
-              "country_code": { "$ref": "#/$defs/isoCountryCode" },
-              "share_percent": { "type": "number", "minimum": 0, "maximum": 100 }
-            },
-            "required": ["country_code","share_percent"]
-          }
-        }
-      },
-      "required": ["breakdown"]
-    }
-  ]
-}
+            "description": "Optional origin of raw material. Use 'countries' if shares are unknown, or 'breakdown' with % shares.",
+            "oneOf": [
+              {
+                "properties": {
+                  "countries": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": { "$ref": "#/$defs/isoCountryCode" }
+                  }
+                },
+                "required": ["countries"]
+              },
+              {
+                "properties": {
+                  "breakdown": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "properties": {
+                        "country_code": { "$ref": "#/$defs/isoCountryCode" },
+                        "share_percent": { "type": "number", "minimum": 0, "maximum": 100 }
+                      },
+                      "required": ["country_code", "share_percent"]
+                    }
+                  }
+                },
+                "required": ["breakdown"]
+              }
+            ]
+          },
           "material_code": {
             "type": "string",
             "pattern": "^[a-z][a-z0-9_]*$",
             "examples": ["cotton","polyester","wool","leather","linen","viscose","hemp","lyocell"]
           },
           "share_percent": { "type": "number", "minimum": 0, "maximum": 100 },
-          "recycled_content_percent": { "type": "number", "minimum": 0, "maximum": 100 },
-          "origin": {
-  "type": "object",
-  "additionalProperties": false,
-  "description": "Optional origin of raw material. Use 'countries' if shares unknown, or 'breakdown' with % shares.",
-  "oneOf": [
-    {
-      "properties": {
-        "countries": {
-          "type": "array",
-          "minItems": 1,
-          "uniqueItems": true,
-          "items": { "$ref": "#/$defs/isoCountryCode" }
-        }
-      },
-      "required": ["countries"]
-    },
-    {
-      "properties": {
-        "breakdown": {
-          "type": "array",
-          "minItems": 1,
-          "items": {
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {
-              "country_code": { "$ref": "#/$defs/isoCountryCode" },
-              "share_percent": { "type": "number", "minimum": 0, "maximum": 100 }
-            },
-            "required": ["country_code","share_percent"]
-          }
-        }
-      },
-      "required": ["breakdown"]
-    }
-  ]
-}
+          "recycled_content_percent": { "type": "number", "minimum": 0, "maximum": 100 }
         },
         "required": ["material_code", "share_percent", "recycled_content_percent"]
       },
