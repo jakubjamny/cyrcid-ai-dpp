@@ -1,5 +1,5 @@
 **Schema v1 je zamknuté.** Build: ✅, examples: 2× ✅, `schema_version: "1.0.0"`, enum kategorií final, `origin` připraveno.
-Datum: <dnešní>
+Datum: 25.8.2025
 
 # DPP datový model v1 (textil)
 
