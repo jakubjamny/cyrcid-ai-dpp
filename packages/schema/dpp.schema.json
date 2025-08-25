@@ -1,13 +1,270 @@
 {
-  "$id": "https://cyrcid.com/schemas/dpp/v1.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.com/schema/dpp.v1.json",
+  "title": "Digital Product Passport (Textile) v1",
   "type": "object",
+  "additionalProperties": false,
   "properties": {
-    "id": {
-      "type": "string"
-    },
     "product": {
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": { "$ref": "#/$defs/i18nString" },
+        "category": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "code": {
+              "type": "string",
+              "enum": [
+                "jackets","coats","vests","blazers","t_shirts","tops","blouses","shirts",
+                "sweaters","sweatshirts","trousers","jeans","shorts","skirts","leggings",
+                "dresses","jumpsuits","coveralls","underwear","socks","gloves","headwear",
+                "handbags","backpacks","footwear"
+              ]
+            },
+            "labels": { "$ref": "#/$defs/i18nString" }
+          },
+          "required": ["code"]
+        },
+        "description": { "$ref": "#/$defs/i18nString" }
+      },
+      "required": ["name", "category", "description"]
+    },
+
+    "brand": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "legal_name": { "type": "string", "minLength": 1 },
+        "country_code": { "$ref": "#/$defs/isoCountryCode" },
+        "contact": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "url": { "$ref": "#/$defs/urlHttps" }
+          },
+          "required": ["url"]
+        }
+      },
+      "required": ["legal_name", "country_code", "contact"]
+    },
+
+    "manufacturing": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "country_of_origin": { "$ref": "#/$defs/isoCountryCode" },
+        "tier1": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "facility_name": { "type": "string", "minLength": 1 },
+            "facility_country_code": { "$ref": "#/$defs/isoCountryCode" },
+            "withheld_reason": { "type": "string", "minLength": 1 }
+          },
+          "oneOf": [
+            { "required": ["facility_name"] },
+            { "required": ["withheld_reason"] }
+          ]
+        }
+      },
+      "required": ["country_of_origin", "tier1"]
+    },
+
+    "materials": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "material_code": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_]*$",
+            "examples": ["cotton","polyester","wool","leather","linen","viscose","hemp","lyocell"]
+          },
+          "share_percent": { "type": "number", "minimum": 0, "maximum": 100 },
+          "recycled_content_percent": { "type": "number", "minimum": 0, "maximum": 100 }
+        },
+        "required": ["material_code", "share_percent", "recycled_content_percent"]
+      },
+      "description": "Sum of share_percent across all items must equal 100 (checked in validation script)."
+    },
+
+    "care": {
+      "type": "object",
+      "additionalProperties": false,
+      "oneOf": [
+        {
+          "properties": {
+            "symbols": {
+              "type": "array",
+              "minItems": 1,
+              "items": { "type": "string", "pattern": "^[A-Z0-9]+$" }
+            }
+          },
+          "required": ["symbols"]
+        },
+        {
+          "properties": { "text": { "$ref": "#/$defs/i18nString" } },
+          "required": ["text"]
+        }
+      ]
+    },
+
+    "compliance": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "reach_status": { "type": "string", "enum": ["yes","no","unknown"] },
+        "safety_notes": { "type": "string" }
+      },
+      "required": ["reach_status"]
+    },
+
+    "durability_repair": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "warranty_months": { "type": "integer", "minimum": 0 },
+        "repair_options": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": { "url": { "$ref": "#/$defs/urlHttps" } },
+          "required": ["url"]
+        }
+      },
+      "required": ["warranty_months", "repair_options"]
+    },
+
+    "end_of_life": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "recyclability_class": { "type": "string", "enum": ["unknown","low","medium","high"] },
+        "guidance": { "$ref": "#/$defs/i18nString" }
+      },
+      "required": ["recyclability_class", "guidance"]
+    },
+
+    "traceability": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "dpp_url": { "$ref": "#/$defs/urlHttps" }
+      }
+    },
+
+    "identifiers": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "dpp_id": { "$ref": "#/$defs/uuidV4" },
+        "sku": { "type": "string" },
+        "external_ids": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+
+    "meta": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": { "type": "string", "const": "1.0.0" },
+        "created_at": { "type": "string", "format": "date-time" },
+        "data_owner": { "type": "string", "minLength": 1 },
+        "status": { "type": "string", "enum": ["draft","published"], "default": "draft" },
+        "ai_estimate": { "type": "boolean" },
+        "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+        "sources": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/sourceEntry" }
+        }
+      },
+      "required": ["schema_version","created_at","data_owner","status"]
     }
   },
-  "additionalProperties": true
+
+  "required": ["product","brand","manufacturing","materials","care","compliance","durability_repair","end_of_life","meta"],
+
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "meta": { "properties": { "status": { "const": "published" } }, "required": ["status"] }
+        },
+        "required": ["meta"]
+      },
+      "then": {
+        "required": ["identifiers","traceability"],
+        "properties": {
+          "identifiers": { "required": ["dpp_id"] },
+          "traceability": { "required": ["dpp_url"] }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "meta": { "properties": { "ai_estimate": { "const": true } }, "required": ["ai_estimate"] }
+        },
+        "required": ["meta"]
+      },
+      "then": {
+        "properties": {
+          "meta": {
+            "properties": {
+              "sources": {
+                "type": "array",
+                "minItems": 1,
+                "contains": {
+                  "type": "object",
+                  "properties": { "type": { "const": "estimate" } },
+                  "required": ["type"]
+                }
+              }
+            },
+            "required": ["sources"]
+          }
+        }
+      }
+    }
+  ],
+
+  "$defs": {
+    "i18nString": {
+      "type": "object",
+      "description": "Key = language code (e.g., cs, en). At least one language required.",
+      "minProperties": 1,
+      "additionalProperties": { "type": "string" }
+    },
+    "urlHttps": {
+      "type": "string",
+      "pattern": "^https://.+"
+    },
+    "isoCountryCode": {
+      "type": "string",
+      "pattern": "^[A-Z]{2}$"
+    },
+    "uuidV4": {
+      "type": "string",
+      "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$"
+    },
+    "sourceEntry": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "field_path": { "type": "string", "pattern": "^/.*" },
+        "type": { "type": "string", "enum": ["document","measurement","declaration","estimate"] },
+        "title": { "type": "string" },
+        "url": { "type": "string" },
+        "date": { "type": "string", "format": "date" },
+        "confidence": { "type": "number", "minimum": 0, "maximum": 1 }
+      },
+      "required": ["field_path","type","title","date"]
+    }
+  }
 }
