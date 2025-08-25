@@ -82,38 +82,32 @@
         "properties": {
           "origin": {
             "type": "object",
-            "additionalProperties": false,
             "description": "Optional origin of raw material. Use 'countries' if shares are unknown, or 'breakdown' with % shares.",
-            "oneOf": [
-              {
-                "properties": {
-                  "countries": {
-                    "type": "array",
-                    "minItems": 1,
-                    "uniqueItems": true,
-                    "items": { "$ref": "#/$defs/isoCountryCode" }
-                  }
-                },
-                "required": ["countries"]
+            "properties": {
+              "countries": {
+                "type": "array",
+                "minItems": 1,
+                "uniqueItems": true,
+                "items": { "$ref": "#/$defs/isoCountryCode" }
               },
-              {
-                "properties": {
-                  "breakdown": {
-                    "type": "array",
-                    "minItems": 1,
-                    "items": {
-                      "type": "object",
-                      "additionalProperties": false,
-                      "properties": {
-                        "country_code": { "$ref": "#/$defs/isoCountryCode" },
-                        "share_percent": { "type": "number", "minimum": 0, "maximum": 100 }
-                      },
-                      "required": ["country_code", "share_percent"]
-                    }
-                  }
-                },
-                "required": ["breakdown"]
+              "breakdown": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "country_code": { "$ref": "#/$defs/isoCountryCode" },
+                    "share_percent": { "type": "number", "minimum": 0, "maximum": 100 }
+                  },
+                  "required": ["country_code", "share_percent"]
+                }
               }
+            },
+            "additionalProperties": false,
+            "oneOf": [
+              { "required": ["countries"] },
+              { "required": ["breakdown"] }
             ]
           },
           "material_code": {
@@ -131,22 +125,18 @@
 
     "care": {
       "type": "object",
+      "properties": {
+        "symbols": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string", "pattern": "^[A-Z0-9]+$" }
+        },
+        "text": { "$ref": "#/$defs/i18nString" }
+      },
       "additionalProperties": false,
       "oneOf": [
-        {
-          "properties": {
-            "symbols": {
-              "type": "array",
-              "minItems": 1,
-              "items": { "type": "string", "pattern": "^[A-Z0-9]+$" }
-            }
-          },
-          "required": ["symbols"]
-        },
-        {
-          "properties": { "text": { "$ref": "#/$defs/i18nString" } },
-          "required": ["text"]
-        }
+        { "required": ["symbols"] },
+        { "required": ["text"] }
       ]
     },
 
