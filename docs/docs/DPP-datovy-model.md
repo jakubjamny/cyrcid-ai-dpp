@@ -24,3 +24,8 @@
 
 ## AI estimate
 - Pokud `meta.ai_estimate=true`, v `meta.sources` musí být alespoň jeden záznam s `type: "estimate"` a `field_path` na odhadované pole.
+### Materials → origin (optional)
+- **countries**: seznam ISO 3166-1 kódů zemí původu suroviny, pokud neznáme podíly (např. `["TR","IN"]`).
+- **breakdown**: vážené rozdělení podílů v % v rámci daného materiálu. Součet = 100 %.
+- Využití: zpřesnění AI odhadu uhlíkové/vodní stopy (regionální faktory) a trasy dopravy z původu → Tier-1.
+- Pokud není vyplněno, AI použije typická globální rozdělení obchodu pro danou komoditu.
