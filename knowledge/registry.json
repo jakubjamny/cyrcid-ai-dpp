@@ -1,1 +1,7 @@
-{}
+{
+  "tshirt": "apparel-v1@1.0.0",
+  "hoodie": "apparel-v1@1.0.0",
+  "tote": "apparel-v1@1.0.0",
+  "jeans": "apparel-v1@1.0.0",
+  "sneakers": "apparel-v1@1.0.0"
+}
