@@ -1,4 +1,3 @@
-// apps/api/src/lib/packLoader.ts
 import fs from "node:fs/promises";
 import path from "node:path";
 import YAML from "yaml";
@@ -11,14 +10,11 @@ export class ValidationError extends Error {
 }
 
 export type LoaderOptions = {
-  /** Absolutní cesta ke kořeni repa. Default = process.cwd() */
   baseDir?: string;
-  /** Cesta k JSON schématu manifestu. Default = packages/schema/pack.manifest.schema.json */
   schemaPath?: string;
 };
 
 type Registry = {
-  /** Např. { "t_shirts": { "packId": "apparel-v1" } }  */
   categories: Record<string, { packId: string; version?: string }>;
 };
 
@@ -50,9 +46,7 @@ export async function validateManifest(manifest: unknown, opts: LoaderOptions = 
   addFormats(ajv);
   const validate = ajv.compile(schema);
   const ok = validate(manifest);
-  if (!ok) {
-    throw new ValidationError("Pack manifest failed validation", validate.errors);
-  }
+  if (!ok) throw new ValidationError("Pack manifest failed validation", validate.errors);
 }
 
 export async function getPack(category: string, opts: LoaderOptions = {}) {
@@ -64,10 +58,6 @@ export async function getPack(category: string, opts: LoaderOptions = {}) {
     category,
     packId,
     manifest,
-    // pár metadat, může se hodit pro klienty
-    _meta: {
-      schema: "pack.manifest.schema.json",
-      validatedAt: new Date().toISOString()
-    }
+    _meta: { schema: "pack.manifest.schema.json", validatedAt: new Date().toISOString() }
   };
 }
