@@ -3,6 +3,9 @@ import { getPack, NotFoundError, ValidationError } from "./lib/packLoader.js";
 
 const app = Fastify();
 
+// healthcheck pro pohodlné preview
+app.get("/", async () => ({ ok: true, hint: "/api/packs/:category" }));
+
 app.get("/api/packs/:category", async (req, reply) => {
   const { category } = req.params as { category: string };
   try {
@@ -16,7 +19,4 @@ app.get("/api/packs/:category", async (req, reply) => {
   }
 });
 
-const port = Number(process.env.PORT || 3000);
-app.listen({ port, host: "0.0.0.0" })
-  .then(() => console.log(`API listening on http://localhost:${port}`))
-  .catch((err) => { console.error(err); process.exit(1); });
+export default app;
