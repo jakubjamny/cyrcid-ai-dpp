@@ -9,14 +9,8 @@ export class ValidationError extends Error {
   constructor(msg: string, public details?: unknown) { super(msg); }
 }
 
-export type LoaderOptions = {
-  baseDir?: string;
-  schemaPath?: string;
-};
-
-type Registry = {
-  categories: Record<string, { packId: string; version?: string }>;
-};
+export type LoaderOptions = { baseDir?: string; schemaPath?: string; };
+type Registry = { categories: Record<string, { packId: string; version?: string }>; };
 
 export async function loadRegistry(opts: LoaderOptions = {}) {
   const baseDir = opts.baseDir ?? process.cwd();
@@ -54,10 +48,5 @@ export async function getPack(category: string, opts: LoaderOptions = {}) {
   const packId = resolvePackId(registry, category);
   const manifest = await loadManifest(packId, opts);
   await validateManifest(manifest, opts);
-  return {
-    category,
-    packId,
-    manifest,
-    _meta: { schema: "pack.manifest.schema.json", validatedAt: new Date().toISOString() }
-  };
+  return { category, packId, manifest, _meta: { schema: "pack.manifest.schema.json", validatedAt: new Date().toISOString() } };
 }
