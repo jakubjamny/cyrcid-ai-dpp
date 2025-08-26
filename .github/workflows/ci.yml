@@ -2,12 +2,18 @@ name: Validate DPP schema & examples
 
 on:
   push:
-    paths: ["packages/schema/**","examples/**","scripts/**","docs/**","knowledge/**",".github/workflows/**"]
+    paths:
+      - "packages/schema/**"
+      - "examples/**"
+      - "scripts/**"
+      - "docs/**"
+      - "knowledge/**"
+      - ".github/workflows/**"
   pull_request:
-  workflow_dispatch: {}   # umožní ruční spuštění z UI
+  workflow_dispatch:
 
 jobs:
-  validate:                # (tvůj) Python validátor
+  validate:  # Python validátor
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -17,7 +23,7 @@ jobs:
       - run: pip install jsonschema
       - run: python scripts/validate_schema.py
 
-    validate-knowledge-packs:
+  validate-knowledge-packs:  # Node validace manifestů + registru
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -29,7 +35,3 @@ jobs:
         run: npm run validate:all-packs
       - name: Validate registry
         run: npm run test:registry
-
-      # Pokud máš i validator registru (viz krok 2 níže), odkomentuj:
-      # - name: Validate registry
-      #   run: npm run test:registry
