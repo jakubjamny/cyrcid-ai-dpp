@@ -17,7 +17,7 @@ jobs:
       - run: pip install jsonschema
       - run: python scripts/validate_schema.py
 
-  validate-knowledge-packs:  # Node validace manifestů (+ registru)
+    validate-knowledge-packs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -27,6 +27,9 @@ jobs:
       - run: npm ci || npm i
       - name: Validate all knowledge pack manifests
         run: npm run validate:all-packs
+      - name: Validate registry
+        run: npm run test:registry
+
       # Pokud máš i validator registru (viz krok 2 níže), odkomentuj:
       # - name: Validate registry
       #   run: npm run test:registry
