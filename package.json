@@ -7,14 +7,24 @@
     "exporters/*"
   ],
   "scripts": {
-  "ci": "node scripts/validate.js",
-  "validate:pack": "node packages/schema/validate-pack.mjs knowledge/packs/apparel-v1/manifest.yaml",
-  "validate:all-packs": "node packages/schema/validate-pack.mjs $(git ls-files 'knowledge/packs/*/manifest.yaml')",
-  "test:registry": "node packages/schema/validate-registry.mjs knowledge/registry.json"
-},
+    "ci": "node scripts/validate.js",
+    "validate:pack": "node packages/schema/validate-pack.mjs knowledge/packs/apparel-v1/manifest.yaml",
+    "validate:all-packs": "node packages/schema/validate-pack.mjs $(git ls-files 'knowledge/packs/*/manifest.yaml')",
+    "test:registry": "node packages/schema/validate-registry.mjs knowledge/registry.json",
+
+    "api:dev": "tsx apps/api/src/server.ts",
+    "api:test": "vitest run -r apps/api/test"
+  },
+  "dependencies": {
+    "ajv": "^8.17.1",
+    "ajv-formats": "^3.0.1",
+    "fastify": "^4.27.2",
+    "yaml": "^2.5.1"
+  },
   "devDependencies": {
-    "ajv": "^8",
-    "ajv-formats": "^2",
-    "yaml": "^2"
+    "@types/node": "^22.5.4",
+    "tsx": "^4.19.1",
+    "typescript": "^5.5.4",
+    "vitest": "^2.0.5"
   }
 }
