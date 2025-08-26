@@ -1,1 +1,28 @@
+name: Create tag
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag_name:
+        description: 'Tag name to create (e.g., schema-v1.0.0)'
+        required: true
+        default: 'schema-v1.0.0'
+      target_sha:
+        description: '40-char commit SHA to tag'
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  create-tag:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Create annotated tag and push
+        run: |
+          git tag -a "${{ github.event.inputs.tag_name }}" ${{ github.event.inputs.target_sha }} -m "${{ github.event.inputs.tag_name }}"
+          git push origin "${{ github.event.inputs.tag_name }}"
 
