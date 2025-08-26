@@ -1,37 +1,19 @@
 id: apparel-v1
-version: 1.0.0
+version: "1.0.0"
+name: Apparel defaults v1
 categories:
-  - tshirt
-  - hoodie
-  - tote
-  - jeans
-  - sneakers
-contracts:
-  license: CC-BY-4.0
-  attribution_required: false
+  - t_shirts
+  - sweatshirts
+  - handbags
 
-links:
-  - rel: docs
-    title: Pack docs
-    url: https://example.com/packs/apparel-v1
+contracts:
+  dpp_schema_version: "1.0.0"
 
 exposed:
-  fields:
-    - categories
-    - name
-    - version
-json_key_language: en
-description: "AI-curated defaults & rules for apparel v1 (EU focus)."
+  defaults_dir: defaults
+  relevance_dir: relevance
+  vocab_dir: vocab
+
 links:
-  lci_map: "../../lci_map.csv"
-contracts:
-  dpp_schema_version: "1.0.0"   # odpovídá packages/schema/dpp.schema.json v1
-exposed:
-  defaults_dir: "./defaults"
-  relevance_dir: "./relevance"
-  vocab_dir: "./vocab"
-assumptions:
-  region: "EU"
-  units: "SI"
-  transparency:
-    ai_estimate_flag: true
+  docs: "https://example.com/packs/apparel-v1"
+  lci_map: "https://example.com/packs/apparel-v1/lci_map.csv"
