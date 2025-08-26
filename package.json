@@ -7,6 +7,13 @@
     "exporters/*"
   ],
   "scripts": {
-    "ci": "node scripts/validate.js"
+    "ci": "node scripts/validate.js",
+    "validate:pack": "node packages/schema/validate-pack.mjs knowledge/packs/apparel-v1/manifest.yaml",
+    "validate:all-packs": "node packages/schema/validate-pack.mjs $(git ls-files \"knowledge/packs/*/manifest.yaml\")"
+  },
+  "devDependencies": {
+    "ajv": "^8",
+    "ajv-formats": "^2",
+    "yaml": "^2"
   }
 }
