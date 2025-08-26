@@ -1,5 +1,5 @@
 {
-  "t_shirts":    { "packId": "apparel-v1" },
-  "sweatshirts": { "packId": "apparel-v1" },
-  "handbags":    { "packId": "apparel-v1" }
+  "t_shirts": "apparel-v1",
+  "sweatshirts": "apparel-v1",
+  "handbags": "apparel-v1"
 }
