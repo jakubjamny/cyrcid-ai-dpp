@@ -1,7 +1,5 @@
 {
-  "categories": {
-    "t_shirts":    { "packId": "apparel-v1" },
-    "sweatshirts": { "packId": "apparel-v1" },
-    "handbags":    { "packId": "apparel-v1" }
-  }
+  "t_shirts":    { "packId": "apparel-v1" },
+  "sweatshirts": { "packId": "apparel-v1" },
+  "handbags":    { "packId": "apparel-v1" }
 }
