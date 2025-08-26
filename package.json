@@ -1,17 +1,12 @@
 {
   "name": "cyrcid-dpp",
   "private": true,
-  "workspaces": [
-    "apps/*",
-    "packages/*",
-    "exporters/*"
-  ],
+  "workspaces": ["apps/*","packages/*","exporters/*"],
   "scripts": {
     "ci": "node scripts/validate.js",
     "validate:pack": "node packages/schema/validate-pack.mjs knowledge/packs/apparel-v1/manifest.yaml",
     "validate:all-packs": "node packages/schema/validate-pack.mjs $(git ls-files 'knowledge/packs/*/manifest.yaml')",
     "test:registry": "node packages/schema/validate-registry.mjs knowledge/registry.json",
-
     "api:dev": "tsx apps/api/src/server.ts",
     "api:test": "vitest run -r apps/api/test"
   },
