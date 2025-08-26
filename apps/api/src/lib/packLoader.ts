@@ -8,24 +8,31 @@ import addFormats from "ajv-formats";
 export class NotFoundError extends Error {}
 /** 400 pro AJV chyby manifestu */
 export class ValidationError extends Error {
-  constructor(msg: string, public details?: unknown) { super(msg); }
+  constructor(msg: string, public details?: unknown) {
+    super(msg);
+  }
 }
 
-/** Volitelné přesměrování cest a schématu (užitečné v testech) */
+/** Volitelná přesměrování cest (užitečné v testech/CI) */
 export type LoaderOptions = {
-  baseDir?: string;          // default: process.cwd()
-  schemaPath?: string;       // default: packages/schema/pack.manifest.schema.json
+  baseDir?: string;    // default: process.cwd()
+  schemaPath?: string; // default: packages/schema/pack.manifest.schema.json
 };
 
-/** Registr může být:
- *  A) přímo mapa category -> (string | { packId, version? })
- *  B) zabalené { categories: ... } pro stejnou mapu
+/**
+ * Registry může být:
+ *  A) přímo mapa category -> entry
+ *  B) zabalené { categories: mapa }
+ * Entry může být:
+ *  - "apparel-v1"
+ *  - { packId: "apparel-v1", version?: "1.0.0" }
+ *  - { pack:   "apparel-v1", version?: "1.0.0" }
  */
-type CategoryEntry = string | { packId: string; version?: string };
+type CategoryEntry = string | { packId?: string; pack?: string; version?: string };
 type CategoriesMap = Record<string, CategoryEntry>;
 type RegistryWrapped = { categories: CategoriesMap } | CategoriesMap;
 
-/** Načti registry.json (bez validace obsahu) */
+/** Načti registry.json */
 export async function loadRegistry(opts: LoaderOptions = {}): Promise<RegistryWrapped> {
   const baseDir = opts.baseDir ?? process.cwd();
   const p = path.resolve(baseDir, "knowledge/registry.json");
@@ -35,19 +42,20 @@ export async function loadRegistry(opts: LoaderOptions = {}): Promise<RegistryWr
   return JSON.parse(raw) as RegistryWrapped;
 }
 
-/** Získej jednotnou mapu kategorií (funguje pro oba tvary registru) */
+/** Jednotná extrakce mapy kategorií (pro oba tvary registru) */
 function getCategoriesMap(reg: RegistryWrapped): CategoriesMap {
   return (reg as any).categories ?? (reg as CategoriesMap);
 }
 
-/** Rozhodni packId z registru – podporuje string i objektový zápis */
+/** Rozhodni packId z registru – podporuje string i objekt (packId/pack) */
 export function resolvePackId(reg: RegistryWrapped, category: string): string {
   const map = getCategoriesMap(reg);
   const entry = map?.[category];
 
   if (typeof entry === "string") return entry;
-  if (entry && typeof entry === "object" && "packId" in entry && typeof (entry as any).packId === "string") {
-    return (entry as { packId: string }).packId;
+  if (entry && typeof entry === "object") {
+    const pid = (entry as any).packId ?? (entry as any).pack;
+    if (typeof pid === "string" && pid.length > 0) return pid;
   }
   throw new NotFoundError(`Category "${category}" not found in registry`);
 }
