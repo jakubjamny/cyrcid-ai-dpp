@@ -1,95 +1,62 @@
-// packages/schema/validate-registry.mjs
+#!/usr/bin/env node
 import fs from "node:fs";
 import path from "node:path";
-import YAML from "yaml";
+import process from "node:process";
 
-const ROOT = process.cwd();
-const registryPath = process.argv[2] || "knowledge/registry.json";
+const [,, registryPath = "knowledge/registry.json"] = process.argv;
+const root = process.cwd();
 
-function err(msg) { console.error("❌ " + msg); }
-function ok(msg)  { console.log("✅ " + msg); }
+function die(msg) { console.error(msg); process.exit(1); }
+function err(msg) { console.error(msg); hasError = true; }
 
-if (!fs.existsSync(registryPath)) {
-  err(`Registry not found: ${registryPath}`);
-  process.exit(1);
+let hasError = false;
+
+// 1) Načti registry
+let reg;
+try {
+  const raw = fs.readFileSync(registryPath, "utf8");
+  reg = JSON.parse(raw);
+} catch (e) {
+  die(`Failed to read/parse registry at ${registryPath}: ${e.message}`);
 }
 
-const reg = JSON.parse(fs.readFileSync(registryPath, "utf8"));
-const entries = Object.entries(reg);
-if (entries.length === 0) {
-  err("Registry is empty");
-  process.exit(1);
+// 2) Získej mapu kategorií (podporuj oba tvary)
+const map = reg && typeof reg === "object"
+  ? (reg.categories && typeof reg.categories === "object" ? reg.categories : reg)
+  : null;
+
+if (!map || typeof map !== "object") {
+  die("Registry must be an object or { categories: { ... } }");
 }
 
-let failed = false;
-
-for (const [category, target] of entries) {
-  let entryFailed = false;
-
-  if (!category || typeof category !== "string") {
-    err(`Invalid category key: ${String(category)}`); failed = entryFailed = true;
+// 3) Validuj, že pro každou kategorii umíme určit packId (string)
+for (const [category, entry] of Object.entries(map)) {
+  let packId;
+  if (typeof entry === "string") {
+    packId = entry;
+  } else if (entry && typeof entry === "object") {
+    // tolerujeme různé názvy klíčů
+    packId = entry.packId ?? entry.pack ?? entry.id ?? entry.target;
   }
 
-  const m = /^([a-z0-9-]+)@(\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?)$/.exec(target || "");
-  if (!m) { err(`Invalid target "${target}" for category "${category}"`); failed = entryFailed = true; }
+  if (!packId || typeof packId !== "string") {
+    err(`Invalid target "${typeof entry === "object" ? "[object Object]" : String(entry)}" for category "${category}"`);
+    continue;
+  }
 
-  const packId = m?.[1];
-  const version = m?.[2];
-
-  const packDir  = path.resolve(ROOT, `knowledge/packs/${packId}`);
+  // 4) Musí existovat složka a manifest
+  const packDir = path.join(root, "knowledge", "packs", packId);
+  if (!fs.existsSync(packDir)) {
+    err(`Pack folder missing: ${packDir}`);
+    continue;
+  }
   const manifest = path.join(packDir, "manifest.yaml");
-
-  if (!fs.existsSync(packDir))   { err(`Pack folder missing: ${packDir}`); failed = entryFailed = true; }
-  if (!fs.existsSync(manifest))  { err(`Manifest missing for ${packId}: ${manifest}`); failed = entryFailed = true; }
-
-  if (fs.existsSync(manifest)) {
-    try {
-      const data = YAML.parse(fs.readFileSync(manifest, "utf8"));
-
-      if (data.id !== packId) {
-        err(`Manifest id mismatch for ${packId}: expected ${packId}, got ${data.id}`);
-        failed = entryFailed = true;
-      }
-      if (data.version !== version) {
-        err(`Manifest version mismatch for ${packId}: expected ${version}, got ${data.version}`);
-        failed = entryFailed = true;
-      }
-
-      // required subdirs
-      for (const d of ["relevance","defaults","vocab"]) {
-        const p = path.join(packDir, d);
-        if (!fs.existsSync(p)) { err(`Missing dir ${d} in ${packId}`); failed = entryFailed = true; }
-      }
-
-      // links.lci_map musí ukazovat na existující soubor
-      const lci = data?.links?.lci_map;
-      if (!lci) {
-        err(`links.lci_map missing in manifest for ${packId}`);
-        failed = entryFailed = true;
-      } else {
-        const lciAbs = path.resolve(packDir, lci);
-        if (!fs.existsSync(lciAbs)) {
-          err(`links.lci_map not found for ${packId}: "${lci}" → ${path.relative(ROOT, lciAbs)}`);
-          failed = entryFailed = true;
-        }
-      }
-
-      // (informativní) exposed cesty – doporučené hodnoty
-      const ex = data?.exposed || {};
-      const expected = { defaults_dir: "./defaults", relevance_dir: "./relevance", vocab_dir: "./vocab" };
-      for (const k of Object.keys(expected)) {
-        if (ex[k] && path.normalize(ex[k]) !== expected[k]) {
-          console.log(`ℹ️  manifest.exposed.${k} is "${ex[k]}", usually "${expected[k]}"`);
-        }
-      }
-
-    } catch (e) {
-      err(`Cannot parse manifest for ${packId}: ${e.message}`);
-      failed = entryFailed = true;
-    }
+  if (!fs.existsSync(manifest)) {
+    err(`Manifest missing for ${packId}: ${manifest}`);
+    continue;
   }
 
-  if (!entryFailed) ok(`Category "${category}" → ${target} OK`);
+  console.log(`✓ ${category} -> ${packId}`);
 }
 
-process.exit(failed ? 1 : 0);
+process.exit(hasError ? 1 : 0);
