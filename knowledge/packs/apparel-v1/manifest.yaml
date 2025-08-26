@@ -6,6 +6,20 @@ categories:
   - tote
   - jeans
   - sneakers
+contracts:
+  license: CC-BY-4.0
+  attribution_required: false
+
+links:
+  - rel: docs
+    title: Pack docs
+    url: https://example.com/packs/apparel-v1
+
+exposed:
+  fields:
+    - categories
+    - name
+    - version
 json_key_language: en
 description: "AI-curated defaults & rules for apparel v1 (EU focus)."
 links:
