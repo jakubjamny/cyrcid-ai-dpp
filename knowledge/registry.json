@@ -1,5 +1,5 @@
 {
-  "t_shirts":    { "pack": "apparel-v1", "packId": "apparel-v1", "version": "1.0.0" },
-  "sweatshirts": { "pack": "apparel-v1", "packId": "apparel-v1", "version": "1.0.0" },
-  "handbags":    { "pack": "apparel-v1", "packId": "apparel-v1", "version": "1.0.0" }
+  "t_shirts":    { "packId": "apparel-v1" },
+  "sweatshirts": { "packId": "apparel-v1" },
+  "handbags":    { "packId": "apparel-v1" }
 }
