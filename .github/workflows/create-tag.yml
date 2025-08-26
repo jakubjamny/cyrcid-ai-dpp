@@ -20,9 +20,26 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0
-      - name: Create annotated tag and push
+          fetch-depth: 0   # ať máme historii pro tagování
+          persist-credentials: true
+      - name: Configure git identity
         run: |
+          git config user.name "${{ github.actor }}"
+          git config user.email "${{ github.actor }}@users.noreply.github.com"
+      - name: Ensure target commit is present
+        run: |
+          set -e
+          if ! git cat-file -e ${{ github.event.inputs.target_sha }}^{commit} 2>/dev/null; then
+            git fetch --no-tags origin ${{ github.event.inputs.target_sha }}
+          fi
+          git cat-file -e ${{ github.event.inputs.target_sha }}^{commit}
+      - name: Create annotated tag
+        run: |
+          if git rev-parse -q --verify "refs/tags/${{ github.event.inputs.tag_name }}" >/dev/null; then
+            echo "Tag already exists"; exit 1
+          fi
           git tag -a "${{ github.event.inputs.tag_name }}" ${{ github.event.inputs.target_sha }} -m "${{ github.event.inputs.tag_name }}"
-          git push origin "${{ github.event.inputs.tag_name }}"
-
+      - name: Push tag
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: git push origin "refs/tags/${{ github.event.inputs.tag_name }}"
