@@ -42,4 +42,23 @@ categories:
       allowed_if_evidence:
         - path: "/lca/impacts/*"
         - path: "/lca/model/*"
-        - path: "/lca/boun
+        - path: "/lca/boundaries/*"
+      allowed:
+        - "/materials/*/code"
+        - "/materials/*/fraction_mass"
+        - "/care/*"
+        - "/weight/net_mass_g"
+
+  hoodie:
+    overrides:
+      required:
+        - "/materials/*/fraction_mass"
+      allowed_if_evidence:
+        - path: "/lca/impacts/*"
+        - path: "/lca/model/*"
+        - path: "/lca/boundaries/*"
+      allowed:
+        - "/materials/*/code"
+        - "/materials/*/fraction_mass"
+        - "/care/*"
+        - "/weight/net_mass_g"
