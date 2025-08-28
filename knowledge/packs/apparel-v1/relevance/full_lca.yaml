@@ -1,50 +1,45 @@
 schema_version: "1"
 notes: |
-Full‑LCA matice – povoluje LCA pole pouze s kvalifikovanou evidencí (ecoinvent/PEF) a minimální jistotou.
-Navíc volitelné prahy pro kvalitu dat (DQR) – pokud jsou ve `meta.sources[]` k dispozici.
+  Full-LCA matice – povoluje LCA pole pouze s kvalifikovanou evidencí (ecoinvent/PEF) a minimální jistotou.
+  Navíc volitelné prahy pro kvalitu dat (DQR) – pokud jsou ve `meta.sources[]` k dispozici.
 
 constraints:
-allowed_if_evidence:
-defaults:
-min_confidence: 0.60
-allowed_source_types: ["ecoinvent", "pef", "supplier", "lab", "system:integration", "user"]
-dqr:
-enabled: true # vyhodnocuje se jen pokud zdroje nesou DQR
-total_max: 1.6 # doporučený práh PEF (DQR ≤ 1.6)
-components_max: 2 # TeR/GeR/TiR ≤ 2, P ≤ 3 (viz níže)
-perf_max: 3
+  allowed_if_evidence:
+    defaults:
+      min_confidence: 0.60
+      allowed_source_types: ["ecoinvent", "pef", "supplier", "lab", "system:integration", "user"]
+      dqr:
+        enabled: true        # vyhodnocuje se jen pokud zdroje nesou DQR
+        total_max: 1.6       # doporučený práh PEF (DQR ≤ 1.6)
+        components_max: 2    # TeR/GeR/TiR ≤ 2
+        perf_max: 3          # P ≤ 3
 
 categories:
-default:
-required:
-- "/product/id"
-- "/product/name"
-- "/product/category"
-allowed:
-- "/materials/*/code"
-- "/materials/*/fraction_mass"
-- "/care/*"
-- "/weight/net_mass_g"
-- "/supply_chain/*/country_code"
-do_not_infer:
-- "/supply_chain/*/supplier_name"
-- "/supply_chain/*/supplier_id"
-- "/costs/*"
-allowed_if_evidence:
-- path: "/lca/impacts/*"
-- path: "/lca/model/*"
-- path: "/lca/boundaries/*"
+  default:
+    required:
+      - "/product/id"
+      - "/product/name"
+      - "/product/category"
+    allowed:
+      - "/materials/*/code"
+      - "/materials/*/fraction_mass"
+      - "/care/*"
+      - "/weight/net_mass_g"
+      - "/supply_chain/*/country_code"
+    do_not_infer:
+      - "/supply_chain/*/supplier_name"
+      - "/supply_chain/*/supplier_id"
+      - "/costs/*"
+    allowed_if_evidence:
+      - path: "/lca/impacts/*"
+      - path: "/lca/model/*"
+      - path: "/lca/boundaries/*"
 
-tshirt:
-overrides:
-required:
-- "/materials/*/fraction_mass"
-allowed_if_evidence:
-- path: "/lca/impacts/*"
-- path: "/lca/model/*"
-- path: "/lca/boundaries/*"
-allowed:
-- "/materials/*/code"
-- "/materials/*/fraction_mass"
-- "/care/*"
-- "/weight/net_mass_g"
+  tshirt:
+    overrides:
+      required:
+        - "/materials/*/fraction_mass"
+      allowed_if_evidence:
+        - path: "/lca/impacts/*"
+        - path: "/lca/model/*"
+        - path: "/lca/boun
