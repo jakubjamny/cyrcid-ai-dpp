@@ -19,7 +19,6 @@ do_not_infer:
 - "/supply_chain/*/supplier_id"
 - "/costs/*"
 - "/lca/*" # ve freemiu žádné LCA
-- "/supply_chain/*/supplier_id"
 
 tshirt:
 overrides:
