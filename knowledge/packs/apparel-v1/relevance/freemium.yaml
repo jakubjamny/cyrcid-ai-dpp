@@ -20,6 +20,7 @@ do_not_infer:
 - "/supply_chain/*/supplier_id"
 - "/costs/*"
 - "/lca/*" # ve freemiu žádné LCA
+- "/supply_chain/*/supplier_id"
 
 tshirt:
 overrides:
@@ -32,3 +33,15 @@ allowed:
 - "/weight/net_mass_g"
 do_not_infer:
 - "/lca/*"
+
+  hoodie:
+    overrides:
+      required:
+        - "/materials/*/fraction_mass"
+      allowed:
+        - "/materials/*/code"
+        - "/materials/*/fraction_mass"
+        - "/care/*"
+        - "/weight/net_mass_g"
+      do_not_infer:
+        - "/lca/*"
