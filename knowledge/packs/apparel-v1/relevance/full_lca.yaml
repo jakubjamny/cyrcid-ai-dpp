@@ -1,5 +1,4 @@
 schema_version: "1"
-notes: "Full-LCA matice – LCA pole jen s kvalifikovanou evidencí (ecoinvent/PEF) a min. jistotou."
 notes: |
 Full‑LCA matice – povoluje LCA pole pouze s kvalifikovanou evidencí (ecoinvent/PEF) a minimální jistotou.
 Navíc volitelné prahy pro kvalitu dat (DQR) – pokud jsou ve `meta.sources[]` k dispozici.
