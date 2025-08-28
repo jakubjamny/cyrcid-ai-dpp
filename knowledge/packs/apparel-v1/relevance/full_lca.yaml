@@ -1,4 +1,5 @@
 schema_version: "1"
+notes: "Full-LCA matice – LCA pole jen s kvalifikovanou evidencí (ecoinvent/PEF) a min. jistotou."
 notes: |
 Full‑LCA matice – povoluje LCA pole pouze s kvalifikovanou evidencí (ecoinvent/PEF) a minimální jistotou.
 Navíc volitelné prahy pro kvalitu dat (DQR) – pokud jsou ve `meta.sources[]` k dispozici.
@@ -30,6 +31,7 @@ do_not_infer:
 - "/supply_chain/*/supplier_name"
 - "/supply_chain/*/supplier_id"
 - "/costs/*"
+- "/supply_chain/*/supplier_id"
 allowed_if_evidence:
 - path: "/lca/impacts/*"
 - path: "/lca/model/*"
