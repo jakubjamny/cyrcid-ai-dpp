@@ -1,4 +1,5 @@
 schema_version: "1"
+notes: "Freemium matice – bez LCA; zakazuje inference dodavatelů a nákladů."
 notes: |
 Freemium matice – bez LCA metrik; povoluje jen bezpečné odhady a povinné identifikační údaje.
 Wildcard `*` odpovídá jedné úrovni (položky pole / klíče mapy).
