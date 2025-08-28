@@ -1,64 +1,67 @@
-schema_version: "1"
-notes: |
-  Full-LCA matice – povoluje LCA pole pouze s kvalifikovanou evidencí (ecoinvent/PEF) a minimální jistotou.
-  Navíc volitelné prahy pro kvalitu dat (DQR) – pokud jsou ve `meta.sources[]` k dispozici.
+version: 1
+pack: apparel-v1
+matrix: full_lca
+rules:
+  categories:
+    "*":
+      include:
+        - product.id
+        - product.name
+        - brand
+        - category
+        - materials[*].code
+        - materials[*].share
+        - materials[*].lci_dataset
+        - weight.total_g
+        - origin.country
+        - manufacture.country
+        - processes.*.electricity_mix
+        - impacts.*
+        - use_phase.*
+        - end_of_life.*
+        - meta.assumptions[*]
+        - meta.sources[*]
+      map:
+        product.id: required
+        product.name: required
+        brand: required
+        category: required
+        materials[*].code: required
+        materials[*].share: required
 
-constraints:
-  allowed_if_evidence:
-    defaults:
-      min_confidence: 0.60
-      allowed_source_types: ["ecoinvent", "pef", "supplier", "lab", "system:integration", "user"]
-      dqr:
-        enabled: true        # vyhodnocuje se jen pokud zdroje nesou DQR
-        total_max: 1.6       # doporučený práh PEF (DQR ≤ 1.6)
-        components_max: 2    # TeR/GeR/TiR ≤ 2
-        perf_max: 3          # P ≤ 3
+        materials[*].lci_dataset:
+          allowed_if_evidence:
+            source_types: [ecoinvent, pef]
+            confidence_min: 0.75
+            requires_lci_map: true
 
-categories:
-  default:
-    required:
-      - "/product/id"
-      - "/product/name"
-      - "/product/category"
-    allowed:
-      - "/materials/*/code"
-      - "/materials/*/fraction_mass"
-      - "/care/*"
-      - "/weight/net_mass_g"
-      - "/supply_chain/*/country_code"
-    do_not_infer:
-      - "/supply_chain/*/supplier_name"
-      - "/supply_chain/*/supplier_id"
-      - "/costs/*"
-    allowed_if_evidence:
-      - path: "/lca/impacts/*"
-      - path: "/lca/model/*"
-      - path: "/lca/boundaries/*"
+        weight.total_g: allowed
+        origin.country: allowed
+        manufacture.country: allowed
 
-  tshirt:
-    overrides:
-      required:
-        - "/materials/*/fraction_mass"
-      allowed_if_evidence:
-        - path: "/lca/impacts/*"
-        - path: "/lca/model/*"
-        - path: "/lca/boundaries/*"
-      allowed:
-        - "/materials/*/code"
-        - "/materials/*/fraction_mass"
-        - "/care/*"
-        - "/weight/net_mass_g"
+        processes.*.electricity_mix:
+          allowed_if_evidence:
+            source_types: [ecoinvent, pef]
+            confidence_min: 0.75
+            requires_lci_map: false
 
-  hoodie:
-    overrides:
-      required:
-        - "/materials/*/fraction_mass"
-      allowed_if_evidence:
-        - path: "/lca/impacts/*"
-        - path: "/lca/model/*"
-        - path: "/lca/boundaries/*"
-      allowed:
-        - "/materials/*/code"
-        - "/materials/*/fraction_mass"
-        - "/care/*"
-        - "/weight/net_mass_g"
+        impacts.*:
+          allowed_if_evidence:
+            source_types: [ecoinvent, pef]
+            confidence_min: 0.75
+            requires_lci_map: true
+
+        use_phase.*:
+          allowed_if_evidence:
+            source_types: [ecoinvent, pef]
+            confidence_min: 0.75
+            requires_lci_map: false
+
+        end_of_life.*:
+          allowed_if_evidence:
+            source_types: [ecoinvent, pef]
+            confidence_min: 0.75
+            requires_lci_map: false
+
+        meta.assumptions[*]: required
+        meta.sources[*]: required

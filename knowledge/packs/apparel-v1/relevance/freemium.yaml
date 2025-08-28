@@ -1,45 +1,42 @@
-schema_version: "1"
-notes: |
-  Freemium matice – bez LCA metrik; povoluje jen bezpečné odhady a povinné identifikační údaje.
-  Wildcard `*` odpovídá jedné úrovni (položky pole / klíče mapy).
+version: 1
+pack: apparel-v1
+matrix: freemium
+rules:
+  categories:
+    "*":
+      include:
+        - product.id
+        - product.name
+        - brand
+        - category
+        - materials[*].code
+        - materials[*].share
+        - weight.total_g
+        - origin.country
+        - manufacture.country
+        - care.labels[*]
+        - meta.assumptions[*]
+        - meta.sources[*]
+        # vše pod tímto je jen pro jistotu zachycené k oříznutí:
+        - impacts.*
+        - processes.*
+        - use_phase.*
+        - end_of_life.*
+      map:
+        product.id: required
+        product.name: required
+        brand: required
+        category: required
+        materials[*].code: required
+        materials[*].share: required
+        weight.total_g: allowed
+        origin.country: allowed
+        manufacture.country: allowed
+        care.labels[*]: allowed
+        meta.assumptions[*]: required
+        meta.sources[*]: allowed
 
-categories:
-  default:
-    required:
-      - "/product/id"
-      - "/product/name"
-      - "/product/category"
-    allowed:
-      - "/materials/*/code"
-      - "/materials/*/fraction_mass"
-      - "/care/*"
-      - "/weight/net_mass_g"
-    do_not_infer:
-      - "/supply_chain/*/supplier_name"
-      - "/supply_chain/*/supplier_id"
-      - "/costs/*"
-      - "/lca/*" # ve freemiu žádné LCA
-
-  tshirt:
-    overrides:
-      required:
-        - "/materials/*/fraction_mass"
-      allowed:
-        - "/materials/*/code"
-        - "/materials/*/fraction_mass"
-        - "/care/*"
-        - "/weight/net_mass_g"
-      do_not_infer:
-        - "/lca/*"
-
-  hoodie:
-    overrides:
-      required:
-        - "/materials/*/fraction_mass"
-      allowed:
-        - "/materials/*/code"
-        - "/materials/*/fraction_mass"
-        - "/care/*"
-        - "/weight/net_mass_g"
-      do_not_infer:
-        - "/lca/*"
+        impacts.*: do-not-infer
+        processes.*: do-not-infer
+        use_phase.*: do-not-infer
+        end_of_life.*: do-not-infer
